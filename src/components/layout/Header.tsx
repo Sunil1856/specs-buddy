@@ -37,6 +37,7 @@ export default function Header() {
   // Format title based on pathname
   const getPageTitle = () => {
     if (!pathname || pathname === "/" || pathname === "/dashboard") return "Executive Dashboard";
+    if (pathname.startsWith("/whatsapp-web")) return "WhatsApp Web (QR Connect & Direct Broadcast)";
     if (pathname.startsWith("/contacts")) return "Contact Management & CRM";
     if (pathname.startsWith("/groups")) return "Customer Groups & Segments";
     if (pathname.startsWith("/campaigns")) return "WhatsApp Campaign Manager";

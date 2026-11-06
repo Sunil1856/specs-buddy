@@ -19,6 +19,7 @@ import {
   LogOut,
   Glasses,
   ShieldCheck,
+  QrCode,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -31,13 +32,14 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "WhatsApp Web", href: "/whatsapp-web", icon: QrCode, badge: "QR Login" },
+  { name: "WhatsApp Inbox", href: "/inbox", icon: MessageSquare, badge: "Live" },
+  { name: "Campaigns", href: "/campaigns", icon: Send },
   { name: "Contacts CRM", href: "/contacts", icon: Users },
   { name: "Customer Groups", href: "/groups", icon: FolderTree },
-  { name: "Campaigns", href: "/campaigns", icon: Send },
   { name: "Templates", href: "/templates", icon: FileText },
   { name: "Scheduler", href: "/scheduler", icon: Calendar },
   { name: "Media Library", href: "/media", icon: ImageIcon },
-  { name: "WhatsApp Inbox", href: "/inbox", icon: MessageSquare, badge: "Live" },
   { name: "Analytics & Reports", href: "/analytics", icon: BarChart3 },
   { name: "Settings & Security", href: "/settings", icon: Settings },
 ];

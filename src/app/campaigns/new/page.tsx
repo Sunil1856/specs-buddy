@@ -21,6 +21,7 @@ import {
   PhoneCall,
   ExternalLink,
   Info,
+  QrCode,
 } from "lucide-react";
 
 function NewCampaignForm() {
@@ -290,6 +291,60 @@ function NewCampaignForm() {
                     placeholder="e.g. Broadcast to VIP eyewear clients with 20% discount coupon"
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:border-emerald-500 text-xs"
                   />
+                </div>
+
+                {/* Gateway Mode Selection */}
+                <div>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    Select WhatsApp Dispatch Gateway *
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setGatewayMode("WHATSAPP_WEB")}
+                      className={`p-3 rounded-xl border text-left flex items-start gap-2.5 transition-all ${
+                        gatewayMode === "WHATSAPP_WEB"
+                          ? "border-teal-500 bg-teal-50/60 dark:bg-teal-950/30 ring-2 ring-teal-500/20"
+                          : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-slate-300"
+                      }`}
+                    >
+                      <QrCode className="w-4 h-4 text-teal-600 mt-0.5 shrink-0" />
+                      <div>
+                        <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-1.5">
+                          <span>WhatsApp Web Linked</span>
+                          <span className="px-1.5 py-0.2 rounded text-[9px] bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300 font-extrabold uppercase">
+                            Direct
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-slate-500 mt-0.5">
+                          Direct phone broadcast with zero Meta template approvals
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setGatewayMode("META_CLOUD_API")}
+                      className={`p-3 rounded-xl border text-left flex items-start gap-2.5 transition-all ${
+                        gatewayMode === "META_CLOUD_API"
+                          ? "border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/30 ring-2 ring-emerald-500/20"
+                          : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-slate-300"
+                      }`}
+                    >
+                      <Send className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                      <div>
+                        <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-1.5">
+                          <span>Official Meta Cloud API</span>
+                          <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300 font-extrabold uppercase">
+                            Enterprise
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-slate-500 mt-0.5">
+                          Official Graph API v20.0 with approved Meta templates
+                        </div>
+                      </div>
+                    </button>
+                  </div>
                 </div>
 
                 <div>
