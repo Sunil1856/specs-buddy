@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  # 1. SPECS BUDDY Web Application & API
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: specsbuddy_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://specsbuddy_user:specsbuddy_secret_password_2026@postgres:5432/specsbuddy_db?schema=public
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=specs-buddy-production-jwt-secret-key-at-least-32-chars-long-2026
+      - META_APP_ID=${META_APP_ID:-891238471928374}
+      - META_WABA_ID=${META_WABA_ID:-109823471029384}
+      - META_PHONE_NUMBER_ID=${META_PHONE_NUMBER_ID:-105928374829102}
+      - META_ACCESS_TOKEN=${META_ACCESS_TOKEN}
+      - META_APP_SECRET=${META_APP_SECRET}
+      - META_WEBHOOK_VERIFY_TOKEN=${META_WEBHOOK_VERIFY_TOKEN:-specs_buddy_verify_token_2026}
+      - META_TEST_MODE=${META_TEST_MODE:-true}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+    volumes:
+      - uploads_data:/app/public/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # 2. Background Campaign Scheduler Worker
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: specsbuddy_worker
+    restart: unless-stopped
+    command: ["npm", "run", "worker"]
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://specsbuddy_user:specsbuddy_secret_password_2026@postgres:5432/specsbuddy_db?schema=public
+      - REDIS_URL=redis://redis:6379
+      - META_TEST_MODE=${META_TEST_MODE:-true}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # 3. PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: specsbuddy_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: specsbuddy_user
+      POSTGRES_PASSWORD: specsbuddy_secret_password_2026
+      POSTGRES_DB: specsbuddy_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U specsbuddy_user -d specsbuddy_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 4. Redis Queue
+  redis:
+    image: redis:7-alpine
+    container_name: specsbuddy_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 5. Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: specsbuddy_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - uploads_data:/var/www/uploads:ro
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads_data:
