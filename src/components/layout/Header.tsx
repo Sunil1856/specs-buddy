@@ -66,7 +66,7 @@ export default function Header() {
       <div className="flex items-center gap-3">
         {/* Active Gateway Status Pill */}
         <Link
-          href="/settings"
+          href={apiStatus?.gatewayMode === "WHATSAPP_WEB" ? "/settings?tab=whatsapp-web" : "/settings?tab=api"}
           className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors border ${
             apiStatus?.gatewayMode === "WHATSAPP_WEB"
               ? "bg-teal-50 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300 border-teal-300 dark:border-teal-800 hover:bg-teal-100"

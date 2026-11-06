@@ -120,18 +120,27 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Meta API Status Badge */}
+      {/* Meta API Status Widget / Button */}
       {!collapsed && (
-        <div className="mx-3 mb-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
+        <Link
+          href="/settings?tab=api"
+          className="mx-3 mb-3 p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800/80 hover:border-emerald-500/50 transition-all duration-200 block group cursor-pointer"
+          title="Click to configure Meta Cloud API settings"
+        >
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-semibold text-slate-300">Meta Cloud API</span>
+            <span className="text-xs font-semibold text-slate-300 group-hover:text-emerald-400 transition-colors">
+              Meta Cloud API
+            </span>
             <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
               v20.0
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-1">Official Cloud Gateway Ready</p>
-        </div>
+          <p className="text-[11px] text-slate-400 mt-1 flex items-center justify-between">
+            <span>Official Cloud Gateway</span>
+            <span className="text-emerald-400 font-bold group-hover:translate-x-0.5 transition-transform">→</span>
+          </p>
+        </Link>
       )}
 
       {/* User Footer Profile */}

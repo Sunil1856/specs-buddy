@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import AppLayout from "@/components/layout/AppLayout";
 import {
   Settings,
@@ -28,9 +29,23 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
-export default function SettingsPage() {
+function SettingsContent() {
   const { user, hasMinRole } = useAuth();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<"api" | "whatsapp-web" | "users" | "logs">("api");
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "api" || tabParam === "meta") {
+      setActiveTab("api");
+    } else if (tabParam === "whatsapp-web" || tabParam === "web") {
+      setActiveTab("whatsapp-web");
+    } else if (tabParam === "users") {
+      setActiveTab("users");
+    } else if (tabParam === "logs") {
+      setActiveTab("logs");
+    }
+  }, [searchParams]);
 
   // WhatsApp Web Session & Dual Gateway State
   const [webSession, setWebSession] = useState<{
@@ -251,12 +266,12 @@ export default function SettingsPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
 
-      alert("API Credentials updated successfully!");
+      alert("✅ Meta Cloud API Credentials saved successfully!");
       setTokenInput("");
       setSecretInput("");
       fetchCreds();
     } catch (err: any) {
-      alert(err.message || "Failed to save credentials");
+      alert("❌ Failed to save credentials: " + (err.message || "Unknown error"));
     } finally {
       setSavingCreds(false);
     }
@@ -269,14 +284,43 @@ export default function SettingsPage() {
       const res = await fetch("/api/settings/api-credentials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
+        body: JSON.stringify({
+          customConfig: {
+            appId: creds.appId,
+            wabaId: creds.wabaId,
+            phoneNumberId: creds.phoneNumberId,
+            accessToken: tokenInput.trim() || undefined,
+            isTestMode: creds.isTestMode,
+          },
+        }),
       });
 
       const json = await res.json();
       setTestResult(json);
-      fetchCreds();
+      if (json.success) {
+        alert(
+          "✅ Meta Cloud API Connection Verified!\n\n" +
+            "• Status: CONNECTED\n" +
+            "• Quality Rating: " + (json.qualityRating || "GREEN") + "\n" +
+            "• Messaging Tier: " + (json.messagingLimit || "Tier 1 (1,000 msgs/day)") + "\n" +
+            (json.isSimulated ? "• Mode: Simulation Sandbox Active (Zero Meta Charges)" : "• Mode: Live Meta Production API")
+        );
+        setCreds((prev: any) => ({
+          ...prev,
+          status: "CONNECTED",
+          qualityRating: json.qualityRating || "GREEN",
+          messagingLimit: json.messagingLimit || "TIER_1_1K",
+        }));
+      } else {
+        alert(
+          "❌ Meta Connection Failed:\n" +
+            (json.error || "Could not verify Meta Cloud API. Check Phone Number ID & Access Token.")
+        );
+        setCreds((prev: any) => ({ ...prev, status: "ERROR" }));
+      }
     } catch (err: any) {
       setTestResult({ success: false, error: err.message });
+      alert("❌ Connection Error: " + (err.message || "Failed to contact API server"));
     } finally {
       setTestingConnection(false);
     }
@@ -1195,5 +1239,13 @@ export default function SettingsPage() {
         )}
       </div>
     </AppLayout>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-slate-500">Loading settings...</div>}>
+      <SettingsContent />
+    </Suspense>
   );
 }

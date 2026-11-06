@@ -347,6 +347,13 @@ export class MetaWhatsAppClient {
     }
 
     try {
+      if (!config.phoneNumberId) {
+        return {
+          success: false,
+          error: "Phone Number ID is required to test Meta Cloud API connection.",
+        };
+      }
+
       const response = await fetch(
         `${GRAPH_API_BASE}/${config.phoneNumberId}?fields=verified_name,code_verification_status,display_phone_number,quality_rating,throughput`,
         {

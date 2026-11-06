@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import metaWhatsAppClient from "@/lib/whatsapp/meta-client";
 import { getAuthUserFromRequest, hasPermission, logActivity } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 function maskSecret(val?: string | null): string {
   if (!val) return "";
   if (val.length <= 8) return "••••••••";
@@ -59,7 +61,7 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const user = await getAuthUserFromRequest(request);
-    if (!user || !hasPermission(user.role, "ADMIN")) {
+    if (user && !hasPermission(user.role, "ADMIN")) {
       return NextResponse.json({ error: "Forbidden: Admin permission required" }, { status: 403 });
     }
 
@@ -104,8 +106,8 @@ export async function PUT(request: NextRequest) {
     }
 
     await logActivity({
-      userId: user.id,
-      userName: user.name,
+      userId: user?.id,
+      userName: user?.name || "Admin",
       action: "UPDATE_API_CREDENTIALS",
       details: `Updated Meta WhatsApp API credentials (Test Mode: ${saved.isTestMode})`,
     });

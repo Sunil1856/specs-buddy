@@ -18,6 +18,7 @@ import {
   Clock,
   Sparkles,
   Glasses,
+  Key,
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -337,6 +338,22 @@ export default function DashboardPage() {
               </p>
 
               <div className="space-y-2.5">
+                <Link
+                  href="/settings?tab=api"
+                  className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-slate-200 dark:border-slate-700/80 group transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                      <Key className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-xs text-slate-900 dark:text-white">Meta Cloud API Setup</div>
+                      <div className="text-[11px] text-slate-500">Configure credentials & test live connection</div>
+                    </div>
+                  </div>
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-500 transition-colors" />
+                </Link>
+
                 <Link
                   href="/campaigns/new"
                   className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-slate-200 dark:border-slate-700/80 group transition-all"
